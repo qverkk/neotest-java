@@ -8,12 +8,6 @@ local context_manager = require("plenary.context_manager")
 local open = context_manager.open
 local with = context_manager.with
 
-local package_query = lib.treesitter.query.parse(
-  "java",
-  [[
-(package_declaration (identifier) @package.name)
-]]
-)
 
 local M = { name = "neotest-java" }
 
@@ -85,6 +79,13 @@ function M.build_position(file_path, source, captured_nodes)
       local language_tree = lib.treesitter.get_string_parser(source, "java")
       local syntax_tree = language_tree:parse()
       local root = syntax_tree[1]:root()
+
+	  local package_query = lib.treesitter.normalise_query(
+	    "java",
+	    [[
+			(package_declaration (identifier) @package.name)
+		]]
+	  )
       for _, captures, _ in package_query:iter_captures(root, source) do
         local package_name = lib.treesitter.get_node_text(captures, source)
         name = package_name .. "." .. name
