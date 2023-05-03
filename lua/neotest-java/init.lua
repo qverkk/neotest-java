@@ -247,7 +247,7 @@ function M.results(spec, _, _)
       data = reader:read("*a")
     end)
 
-    local root = xml.parse(data)
+    local root = lib.xml.parse(data)
     local testsuites
     if #root.testsuite == 0 then
       testsuites = { root.testsuite }
